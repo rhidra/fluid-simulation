@@ -26,7 +26,7 @@ void main() {
   vec2 vel = texture2D(velocity, st).xy;
 
   vec2 new_st = st - vel * dt;
-  vec4 color = texture2D(prev, fract(new_st));
+  vec4 color = texture2D(prev, new_st);
 
   // If the alpha is null, we are at the initial generation, so we must generate the initial texture
   if (color.a == 0.) {
@@ -41,6 +41,6 @@ void main() {
     // float r = random(st);
     // color = vec4(vec3(r), 1.);
   }
-
+  
   gl_FragColor = color;
 }

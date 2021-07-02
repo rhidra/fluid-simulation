@@ -10,14 +10,13 @@ uniform vec2 resolution;
 
 void main() {
   vec2 st = gl_FragCoord.xy / resolution.xy;
-  st -= .5;
-  float d = length(st) * 4.;
+  st -= .2;
+  float d = 1. - length(st);
+  // d = step(.9, d) * d;
 
-  vec2 v = vec2(.2, .2);
-
-  vec2 vel = vec2(st.x*.2, st.y*.2);
-  
-  vel = mix(v, vec2(0., 0.), d);
+  vec2 vel = mix(vec2(0., 0.), vec2(.2, .2), d);
+  vel = vel * step(.9, d);
+  // vel = vec2(d);
   gl_FragColor = vec4(vec3(vel, 0.), 1.);
 
   // gl_FragColor = vec4(0.1, 0., 0., 1.);

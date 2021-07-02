@@ -45,12 +45,14 @@ export function main() {
   const [textVel, framebufferVel] = createTexture(gl);
   const [textColors, framebufferColors] = createTexture(gl);
 
+  console.log('resolution:', gl.canvas.width, gl.canvas.height);
+
   let lastTime = Date.now() / 1000;
   let i = 0;
 
   function render(time: number) {
     const now = time / 1000;
-    const dt = now - lastTime;
+    const dt = (now - lastTime) * 1;
     lastTime = now;
 
     // Resize canvas and textures
@@ -116,7 +118,7 @@ export function main() {
       renderToTexture(gl, progDiv, framebuffer2, bufferInfo, uniformsDiv);
 
       // Jacobi algorithm to approximate pressure
-      for (let j = 0; j < 10; j++) {
+      for (let j = 0; j < 7; j++) {
         if (j % 2 === 0) {
           // Render one iteration of the Jacobi algorithm to texture3
           renderToTexture(gl, progJacobi, framebuffer3, bufferInfo, uniformsJacobi);
@@ -131,7 +133,7 @@ export function main() {
       // Render the velocity to textVel
       uniformsVel[velocity.uniforms.pressure.variableName] = uniformsJacobi[jacobi.uniforms.prev.variableName];
       renderToTexture(gl, progVel, framebufferVel, bufferInfo, uniformsVel);
-      
+
       // Render the advected colors to texture1 and textColors
       renderToTexture(gl, progAdvColor, framebuffer1, bufferInfo, uniformsAdvColors);
       uniformsIdentity[identity.uniforms.texture.variableName] = texture1;
