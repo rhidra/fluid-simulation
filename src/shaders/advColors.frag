@@ -24,11 +24,8 @@ float random(vec2 st) {
 void main() {
   vec2 st = gl_FragCoord.xy / resolution.xy;
   vec2 vel = texture2D(velocity, st).xy;
-  // De-normalize velocity [0, 1] -> [-1, 1]
-  vel = vel * 2. - 1.;
 
   vec2 new_st = st - vel * dt;
-  // new_st = floor(new_st * resolution) / resolution;
   vec4 color = texture2D(prev, fract(new_st));
 
   // If the alpha is null, we are at the initial generation, so we must generate the initial texture

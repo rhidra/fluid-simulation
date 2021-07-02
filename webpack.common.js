@@ -19,7 +19,13 @@ module.exports = {
         ],
       }, {
         test: /\.(frag|vert)$/,
-        use: 'webpack-glsl-minify',
+        use: {
+          loader: 'webpack-glsl-minify',
+          options: {
+            preserveAll: true,
+            disableMangle: true,
+          }
+        },
       },
     ],
   },
