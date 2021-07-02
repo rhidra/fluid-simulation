@@ -12,6 +12,11 @@ export function main() {
   const gl = document.querySelector<HTMLCanvasElement>("#c").getContext("webgl");
   twgl.resizeCanvasToDisplaySize(gl.canvas as any);
 
+  if (!gl.getExtension('OES_texture_float')) {
+      console.error('no floating point texture support');
+      return;
+  }
+
   // Programs init
   const progConstantVel = twgl.createProgramInfo(gl, [vert.sourceCode, constVelFrag.sourceCode]);
   const progAdvColor = twgl.createProgramInfo(gl, [vert.sourceCode, advColors.sourceCode])

@@ -1,7 +1,7 @@
 import * as twgl from 'twgl.js';
 
 export function createTexture(gl: WebGLRenderingContext): [WebGLTexture, twgl.FramebufferInfo] {
-  const texture = twgl.createTexture(gl, {width: gl.canvas.width, height: gl.canvas.height, min: gl.NEAREST, mag: gl.NEAREST});
+  const texture = twgl.createTexture(gl, {width: gl.canvas.width, height: gl.canvas.height, min: gl.NEAREST, mag: gl.NEAREST, type: gl.FLOAT});
   const framebuffer = twgl.createFramebufferInfo(gl, undefined, gl.canvas.width, gl.canvas.height);
   twgl.bindFramebufferInfo(gl, framebuffer);
   gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
