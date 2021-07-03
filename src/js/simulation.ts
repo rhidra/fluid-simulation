@@ -4,7 +4,7 @@ import { createTexture, createSolidTexture } from './texture';
 
 // Load shaders
 const vert = require('../shaders/shader.vert');
-const constVel = require('../shaders/constantVel.frag');
+const externalForce = require('../shaders/externalForce.frag');
 const advVel = require('../shaders/advVelocity.frag');
 const divergence = require('../shaders/divergence.frag');
 const jacobi = require('../shaders/jacobi.frag');
@@ -24,7 +24,7 @@ export function initSimulation(listener: MouseListener) {
   gl.getExtension('OES_texture_float_linear');
 
   // Programs init
-  const progConstantVel = twgl.createProgramInfo(gl, [vert.sourceCode, constVel.sourceCode]);
+  const progExtForce = twgl.createProgramInfo(gl, [vert.sourceCode, externalForce.sourceCode])
   const progAdvVel = twgl.createProgramInfo(gl, [vert.sourceCode, advVel.sourceCode])
   const progDiv = twgl.createProgramInfo(gl, [vert.sourceCode, divergence.sourceCode])
   const progJacobi = twgl.createProgramInfo(gl, [vert.sourceCode, jacobi.sourceCode])
@@ -38,6 +38,7 @@ export function initSimulation(listener: MouseListener) {
   
   // Textures
   const initColors = createSolidTexture(gl, 0., 0., 0., 0.);
+  const initVel = createSolidTexture(gl, 0., 0., 0., 1.);
   const initJacobi = createSolidTexture(gl, 0., 0., 0., 0.);
   const [texture1, framebuffer1] = createTexture(gl);
   const [texture2, framebuffer2] = createTexture(gl);
@@ -47,6 +48,19 @@ export function initSimulation(listener: MouseListener) {
   const [textColors, framebufferColors] = createTexture(gl);
 
   console.log('resolution:', gl.canvas.width, gl.canvas.height);
+
+  const uniformsExtForce = {
+    [externalForce.uniforms.velocity.variableName]: textVel,
+    [externalForce.uniforms.point.variableName]: [0., 0.],
+    [externalForce.uniforms.force.variableName]: [0., 0.],
+    [externalForce.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
+  };
+
+  listener.onMouseDrag((point, force) => {
+    uniformsExtForce[externalForce.uniforms.point.variableName] = point;
+    uniformsExtForce[externalForce.uniforms.force.variableName] = force;
+  });
+  listener.onMouseDragStop(() => uniformsExtForce[externalForce.uniforms.force.variableName] = [0., 0.]);
 
   let lastTime = Date.now() / 1000;
   let i = 0;
@@ -63,31 +77,27 @@ export function initSimulation(listener: MouseListener) {
     }
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     
-    const uniformsConstVel = {
-      [constVel.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
-    };
-    
     const uniformsAdvVel = {
       [advVel.uniforms.dt.variableName]: dt,
-      [advVel.uniforms.velocity.variableName]: textVel,
+      [advVel.uniforms.velocity.variableName]: texture1,
       [advVel.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
     };
     
     const uniformsDiv = {
       [divergence.uniforms.dt.variableName]: dt,
-      [divergence.uniforms.advVelocity.variableName]: texture1,
+      [divergence.uniforms.advVelocity.variableName]: texture2,
       [divergence.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
     };
     
     const uniformsJacobi = {
-      [jacobi.uniforms.divergence.variableName]: texture2,
+      [jacobi.uniforms.divergence.variableName]: texture1,
       [jacobi.uniforms.prev.variableName]: initJacobi,
       [jacobi.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
     };
     
     const uniformsVel = {
       [velocity.uniforms.dt.variableName]: dt,
-      [velocity.uniforms.advVelocity.variableName]: texture1,
+      [velocity.uniforms.advVelocity.variableName]: texture2,
       [velocity.uniforms.pressure.variableName]: texture4,
       [velocity.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
     };
@@ -106,17 +116,24 @@ export function initSimulation(listener: MouseListener) {
 
     if (i === 0) {
       // Render initial velocity to textVel
-      renderToTexture(gl, progConstantVel, framebufferVel, bufferInfo, uniformsConstVel);
+      uniformsIdentity[identity.uniforms.texture.variableName] = initVel;
+      renderToTexture(gl, progIdentity, framebufferVel, bufferInfo, uniformsIdentity);
 
       // Render initial texture to textColors
       uniformsAdvColors[advColors.uniforms.prev.variableName] = initColors;
       renderToTexture(gl, progAdvColor, framebufferColors, bufferInfo, uniformsAdvColors);
     } else {
-      // Render advected velocity to texture1
-      renderToTexture(gl, progAdvVel, framebuffer1, bufferInfo, uniformsAdvVel);
+      // Add external forces to the velocity and render to texture1
+      renderToTexture(gl, progExtForce, framebuffer1, bufferInfo, uniformsExtForce);
 
-      // Render divergence to texture2
-      renderToTexture(gl, progDiv, framebuffer2, bufferInfo, uniformsDiv);
+      // uniformsIdentity[identity.uniforms.texture.variableName] = texture1;
+      // renderToTexture(gl, progIdentity, null, bufferInfo, uniformsIdentity);
+
+      // Render advected velocity to texture2
+      renderToTexture(gl, progAdvVel, framebuffer2, bufferInfo, uniformsAdvVel);
+
+      // Render divergence to texture1
+      renderToTexture(gl, progDiv, framebuffer1, bufferInfo, uniformsDiv);
 
       // Jacobi algorithm to approximate pressure
       for (let j = 0; j < 7; j++) {

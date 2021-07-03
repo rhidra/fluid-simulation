@@ -1,8 +1,11 @@
+type Vector2 = [number, number];
+
 export class MouseListener {
   isMouseDown = false;
-  prevDir: [number, number] | null = null;
+  prevDir: Vector2 | null = null;
 
-  mouseDragCb: (dir: [number, number], norm: number) => void;
+  mouseDragCb: (point: Vector2, force: Vector2) => void;
+  dragStopCb: () => void;
 
   constructor() {
     const canvas = document.querySelector<HTMLCanvasElement>("#c");
@@ -18,6 +21,9 @@ export class MouseListener {
     document.addEventListener('mouseup', () => {
       this.isMouseDown = false;
       this.prevDir = null;
+      if (this.dragStopCb) {
+        this.dragStopCb();
+      }
     });
     
     document.addEventListener('mousemove', e => {
@@ -34,16 +40,20 @@ export class MouseListener {
         return;
       }
   
-      const dir = [x - this.prevDir[0], y - this.prevDir[1]];
-      const norm = Math.sqrt(dir[0] * dir[0] + dir[1] * dir[1]);
-      const dirNorm: [number, number] = [dir[0] / norm, dir[1] / norm];
-  
-      this.mouseDragCb(dirNorm, norm);
+      const dir: Vector2 = [x - this.prevDir[0], y - this.prevDir[1]];
+      
+      if (this.mouseDragCb) {
+        this.mouseDragCb([x, y], dir);
+      }
     });
   }
 
-  onMouseDrag(fn: (dir: [number, number], norm: number) => void) {
+  onMouseDrag(fn: (point: Vector2, force: Vector2) => void) {
     this.mouseDragCb = fn;
+  }
+
+  onMouseDragStop(fn: () => void) {
+    this.dragStopCb = fn;
   }
 }
 
