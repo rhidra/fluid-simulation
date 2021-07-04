@@ -11,6 +11,7 @@ const jacobi = require('../shaders/jacobi.frag');
 const velocity = require('../shaders/velocity.frag');
 const advColors = require('../shaders/advColors.frag');
 const identity = require('../shaders/identity.frag');
+const postProcess = require('../shaders/postProcess.frag');
 
 export function initSimulation(listener: MouseListener) {
   // WebGL init
@@ -31,6 +32,7 @@ export function initSimulation(listener: MouseListener) {
   const progVel = twgl.createProgramInfo(gl, [vert.sourceCode, velocity.sourceCode])
   const progAdvColor = twgl.createProgramInfo(gl, [vert.sourceCode, advColors.sourceCode])
   const progIdentity = twgl.createProgramInfo(gl, [vert.sourceCode, identity.sourceCode]);
+  const progPostProcess = twgl.createProgramInfo(gl, [vert.sourceCode, postProcess.sourceCode]);
   
   // Vertex shader stuff
   const arrays = {position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0]};
@@ -120,6 +122,13 @@ export function initSimulation(listener: MouseListener) {
       [identity.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
     };
 
+    const uniformsPostProcess = {
+      [postProcess.uniforms.time.variableName]: now,
+      [postProcess.uniforms.colors.variableName]: textColors,
+      [postProcess.uniforms.velocity.variableName]: textVel,
+      [postProcess.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
+    };
+
     if (i === 0) {
       // Render initial velocity to textVel
       uniformsIdentity[identity.uniforms.texture.variableName] = initVel;
@@ -164,9 +173,8 @@ export function initSimulation(listener: MouseListener) {
       renderToTexture(gl, progIdentity, framebufferColors, bufferInfo, uniformsIdentity);
     }
 
-    // Render the color texture to the screen
-    uniformsIdentity[identity.uniforms.texture.variableName] = textColors;
-    renderToTexture(gl, progIdentity, null, bufferInfo, uniformsIdentity);
+    // Render the color texture to the screen with some post processing
+    renderToTexture(gl, progPostProcess, null, bufferInfo, uniformsPostProcess);
 
     i++;
     requestAnimationFrame(render);
