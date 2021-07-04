@@ -39,7 +39,7 @@ export function initSimulation(listener: MouseListener) {
   // Textures
   const initColors = createSolidTexture(gl, 0., 0., 0., 0.);
   const initVel = createSolidTexture(gl, 0., 0., 0., 1.);
-  const initJacobi = createSolidTexture(gl, 0., 0., 0., 0.);
+  const initJacobi = createSolidTexture(gl, 1., 0., 0., 0.);
   const [texture1, framebuffer1] = createTexture(gl);
   const [texture2, framebuffer2] = createTexture(gl);
   const [texture3, framebuffer3] = createTexture(gl);
@@ -51,7 +51,7 @@ export function initSimulation(listener: MouseListener) {
 
   const uniformsExtForce = {
     [externalForce.uniforms.velocity.variableName]: textVel,
-    [externalForce.uniforms.point.variableName]: [0., 0.],
+    [externalForce.uniforms.point.variableName]: [-1., -1.],
     [externalForce.uniforms.force.variableName]: [0., 0.],
     [externalForce.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
   };
@@ -60,7 +60,10 @@ export function initSimulation(listener: MouseListener) {
     uniformsExtForce[externalForce.uniforms.point.variableName] = point;
     uniformsExtForce[externalForce.uniforms.force.variableName] = force;
   });
-  listener.onMouseDragStop(() => uniformsExtForce[externalForce.uniforms.force.variableName] = [0., 0.]);
+  listener.onMouseDragStop(() => {
+    uniformsExtForce[externalForce.uniforms.point.variableName] = [-1., -1.];
+    uniformsExtForce[externalForce.uniforms.force.variableName] = [0., 0.];
+  });
 
   let lastTime = Date.now() / 1000;
   let i = 0;
@@ -104,8 +107,11 @@ export function initSimulation(listener: MouseListener) {
     
     const uniformsAdvColors = {
       [advColors.uniforms.dt.variableName]: dt,
+      [advColors.uniforms.time.variableName]: now,
       [advColors.uniforms.velocity.variableName]: textVel,
       [advColors.uniforms.prev.variableName]: textColors,
+      [advColors.uniforms.point.variableName]: uniformsExtForce[externalForce.uniforms.point.variableName],
+      [advColors.uniforms.force.variableName]: uniformsExtForce[externalForce.uniforms.force.variableName],
       [advColors.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
     };
 
@@ -136,7 +142,7 @@ export function initSimulation(listener: MouseListener) {
       renderToTexture(gl, progDiv, framebuffer1, bufferInfo, uniformsDiv);
 
       // Jacobi algorithm to approximate pressure
-      for (let j = 0; j < 7; j++) {
+      for (let j = 0; j < 10; j++) {
         if (j % 2 === 0) {
           // Render one iteration of the Jacobi algorithm to texture3
           renderToTexture(gl, progJacobi, framebuffer3, bufferInfo, uniformsJacobi);

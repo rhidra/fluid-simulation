@@ -41,8 +41,11 @@ export class MouseListener {
       }
   
       const dir: Vector2 = [x - this.prevDir[0], y - this.prevDir[1]];
+
+      this.prevDir = [x, y];
       
       if (this.mouseDragCb) {
+        // console.log('force:', Math.sqrt(dir[0]*dir[0]+dir[1]*dir[1]));
         this.mouseDragCb([x, y], dir);
       }
     });

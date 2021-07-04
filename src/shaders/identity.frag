@@ -9,6 +9,6 @@ uniform vec2 resolution;
 
 void main() {
   vec2 st = gl_FragCoord.xy / resolution.xy;
-  vec4 color = texture2D(texture, st);
+  vec4 color = (texture2D(texture, st));
   gl_FragColor = color;
 }
