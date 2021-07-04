@@ -1,8 +1,19 @@
+* {
+  user-select: none;
+}
+
+html {
+  overflow: hidden;
+  width: 100%;
+}
+
 body {
   width: 100vw;
   height: 100vh;
+  position: fixed;
   overflow: hidden;
   margin: 0;
+  background-color: black;
 }
 
 canvas#c { 

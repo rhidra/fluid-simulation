@@ -47,7 +47,7 @@ export function initSimulation(listener: MouseListener) {
   const [textVel, framebufferVel] = createTexture(gl);
   const [textColors, framebufferColors] = createTexture(gl);
 
-  console.log('resolution:', gl.canvas.width, gl.canvas.height);
+  console.log(`resolution: ${gl.canvas.width} ${gl.canvas.height}`);
 
   const uniformsExtForce = {
     [externalForce.uniforms.velocity.variableName]: textVel,
