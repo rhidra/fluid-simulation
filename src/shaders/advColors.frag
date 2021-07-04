@@ -56,14 +56,17 @@ void main() {
   vec2 st = gl_FragCoord.xy / resolution.xy;
   vec2 vel = texture2D(velocity, st).xy;
   float v = min(length(vel), 1.) / 1.;
-  float v_step = smoothstep(0., .02, v);
 
+  // Advect colors
   vec2 new_st = st - vel * dt;
   vec4 color = texture2D(prev, new_st);
-  vec3 hsbColor = rgb2hsb(color.rgb);
-  // color.rgb = hsb2rgb(vec3(hsbColor.x, v, hsbColor.z));
-  color.rgb = color.rgb * v_step;
 
+  // Slow decay of low speed colors
+  // Allow for to maintain the halo
+  color.rgb = color.rgb * min(1., step(0.2, v) + sqrt(pow(v / 0.2, 1. / 100.)));
+  
+
+  // Add colors on force points
   vec2 pt = vec2(point.x, 1. - point.y);
   vec2 force_ = vec2(force.x, - force.y);
 
