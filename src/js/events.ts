@@ -33,6 +33,17 @@ export class MouseListener {
       this.handleMouseMove(e.touches[0].clientX, e.touches[0].clientY);
     });
     document.addEventListener('mousemove', e => this.handleMouseMove(e.clientX, e.clientY));
+
+    if (false) {
+      const startTime = Date.now() / 1000;
+      let lastTime = 0;
+      setInterval(() => {
+        const now = Date.now() / 1000 - startTime;
+        const dt = now - lastTime;
+        this.step(now, dt);
+        lastTime = now;
+      }, 1000/60);
+    }
   }
 
   handleMouseDown(clientX: number, clientY: number) {
@@ -81,6 +92,24 @@ export class MouseListener {
 
   onMouseDragStop(fn: () => void) {
     this.dragStopCb = fn;
+  }
+
+  step(time: number, dt: number) {
+    if (time < 3) {
+      this.dragStopCb();
+    }
+    const t = time - 3;
+    const radius = .4 * Math.abs(Math.cos(time));
+    const f = 1/5;
+    const cx = .5;
+    const cy = .5;
+    const force = .05;
+
+    const theta = t * 2 * Math.PI * f;
+
+    const pt: Vector2 = [cx + radius * Math.cos(theta), cy + radius * Math.sin(theta)];
+    const dpt: Vector2 = [- force * Math.sin(theta), force * Math.cos(theta)];
+    this.mouseDragCb(pt, dpt);
   }
 }
 
