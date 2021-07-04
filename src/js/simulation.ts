@@ -142,7 +142,7 @@ export function initSimulation(listener: MouseListener) {
       renderToTexture(gl, progDiv, framebuffer1, bufferInfo, uniformsDiv);
 
       // Jacobi algorithm to approximate pressure
-      for (let j = 0; j < 10; j++) {
+      for (let j = 0; j < 5; j++) {
         if (j % 2 === 0) {
           // Render one iteration of the Jacobi algorithm to texture3
           renderToTexture(gl, progJacobi, framebuffer3, bufferInfo, uniformsJacobi);
