@@ -56,9 +56,17 @@ void main() {
   vec2 new_st = st - vel * dt;
   vec4 color = texture2D(prev, new_st);
 
+  // Reduce brightness and "whitness" with velocity
+  vec3 hsb = rgb2hsb(color.rgb);
+  float s1 = 1. - pow(2.0 * (1.24 - hsb.y), 5.);
+  float s2 = .35 - pow(2.3 * (0.495 - hsb.y), 5.);
+  float s3 = min(1., max(.05, (s1 < .6) ? s2 : s1));
+  hsb.y = s3;
+  color.rgb = hsb2rgb(hsb);
+
   // Slow decay of low speed colors
   // Allow for to maintain the halo
-  color.rgb = color.rgb * min(1., step(0.2, v) + sqrt(pow(v / 0.2, 1. / 100.)));
+  color.rgb = color.rgb * min(1., step(0.2, v) + sqrt(pow(v / 0.2, 1. / 30.)));
   
 
   // Add colors on force points
@@ -70,8 +78,8 @@ void main() {
 
   float f = min(length(force_), .1) / .1;
   
-  v = sqrt(1. - min(1., 1.5 * pow(v, 2.)));
-  color.rgb += f * d * hsb2rgb(vec3(time/5., v, 1.));
+  float s = max(0.1, sqrt(1. - min(1., 1.5 * pow(v, 2.))));
+  color.rgb += f * d * hsb2rgb(vec3(time/5., s, 1.));
 
   // If the alpha is null, we are at the initial generation, so we must generate the initial texture
   if (color.a == 0.) {
