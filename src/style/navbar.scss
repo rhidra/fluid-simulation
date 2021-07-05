@@ -1,30 +1,71 @@
-$bg: #263341;
-$red: #f2304d;
+$bg: hsl(211, 26%, 20%);
+$grey: hsl(210, 9%, 43%);
+$red: hsl(351, 88%, 57%);
+$white: hsl(330, 100%, 100%);
 
 nav {
-  width: 30%;
   z-index: 10;
   position: absolute;
   top: 0;
   border-left: 2px solid $red;
   background: linear-gradient($bg, #222d3b);
   padding: 1rem;
+  box-shadow: 1px 1px 10px black;
 
   section.radio {
     input { display: none; }
-    label { 
-      display: block; 
-      border: 1px solid rgba(#2d3b49, .6);
-      border-radius: 8px;
-      padding: 0.3rem;
+
+    p {
+      color: $grey;
       font-size: .5rem;
-      color: #fffdfe;
-      transition: background linear 150ms;
-      margin: .25rem 0;
+      margin: 0;
+      margin-bottom: .5rem;
+    }
+
+    label { 
+      cursor: pointer;
+      position: relative;
+      display: block; 
+      border-radius: 5px;
+      padding: .5rem;
+      padding-left: 1rem;
+      font-size: .5rem;
+      color: $white;
+      transition: color linear 150ms, background linear 150ms;
+      &:hover {
+        background-color: rgba(#2d3b49, .6);
+      }
+      &:before {
+        content: "◆";
+        position: absolute;
+        left: .3rem;
+        transform: translateY(-1px) scale(0);
+        transition: all linear 50ms;
+      }
     }
 
     input:checked + label {
-      background-color: $red;
+      color: $red;
+      &:before {
+        transform: translateY(-1px) scale(1);
+      }
     }
+  }
+
+  button#menu {
+    z-index: 9;
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 100%;
+    background: $bg;
+    color: white;
+    border: none;
+    outline: inherit;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 0.1rem;
+    font-size: 0.8rem;
+    box-shadow: 4px 1px 8px rgba(black, .5);
   }
 }
