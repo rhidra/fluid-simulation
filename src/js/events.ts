@@ -42,7 +42,7 @@ export class MouseListener {
         const dt = now - lastTime;
         this.step(now, dt);
         lastTime = now;
-      }, 1000/60);
+      }, 1000/30);
     }
   }
 
@@ -97,8 +97,10 @@ export class MouseListener {
     if (time < 3) {
       this.dragStopCb();
     }
+    const {width, height} = this.canvas.getBoundingClientRect();
+    
     const t = time - 3;
-    const radius = .4 * Math.abs(Math.cos(time));
+    const radius = .25;
     const f = 1/5;
     const cx = .5;
     const cy = .5;
@@ -108,6 +110,8 @@ export class MouseListener {
 
     const pt: Vector2 = [cx + radius * Math.cos(theta), cy + radius * Math.sin(theta)];
     const dpt: Vector2 = [- force * Math.sin(theta), force * Math.cos(theta)];
+
+    pt[0] *= width / height;
     this.mouseDragCb(pt, dpt);
   }
 }
