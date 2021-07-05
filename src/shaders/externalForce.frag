@@ -48,12 +48,17 @@ void main() {
     // Distance field for the ellipsis
     float d = length(st - pt1) + length(st - pt2);
 
+    // Gradient from the back to the front of the ellipsis, to add more force to the front
+    float front = dot((st - pt1)/length(st-pt1), f/length(f));
+    front = front * .5 + .5;
+    front = sqrt(pow(front, 20.));
+
     // Radius of the ellipsis, depends on the force applied
     float r = lerp(.01, .25, .001, .2, min(length(f*2.), .2));
 
     // Modify the velocity field
     float isClose = 1. - step(r, d);
-    vel = isClose * f * mix(1., 10., d/r) +  vel;
+    vel += isClose * front * f * mix(1., 10., d/r);
   }
 
   gl_FragColor = vec4(vec3(vel, 0.), 1.);
