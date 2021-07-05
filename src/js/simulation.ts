@@ -13,10 +13,14 @@ const advColors = require('../shaders/advColors.frag');
 const identity = require('../shaders/identity.frag');
 const postProcess = require('../shaders/postProcess.frag');
 
+const RESOLUTION_FACTOR = 1.4;
+
 export function initSimulation(listener: MouseListener) {
   // WebGL init
   const gl = document.querySelector<HTMLCanvasElement>("#c").getContext("webgl");
   twgl.resizeCanvasToDisplaySize(gl.canvas as any);
+  gl.canvas.width /= RESOLUTION_FACTOR;
+  gl.canvas.height /= RESOLUTION_FACTOR;
 
   if (!gl.getExtension('OES_texture_float')) {
       console.error('no floating point texture support');
@@ -77,6 +81,8 @@ export function initSimulation(listener: MouseListener) {
 
     // Resize canvas and textures
     if (twgl.resizeCanvasToDisplaySize(gl.canvas as any)) {
+      gl.canvas.width /= RESOLUTION_FACTOR;
+      gl.canvas.height /= RESOLUTION_FACTOR;    
       twgl.resizeFramebufferInfo(gl, framebuffer1, undefined, gl.canvas.width, gl.canvas.height);
       twgl.resizeFramebufferInfo(gl, framebuffer2, undefined, gl.canvas.width, gl.canvas.height);
       twgl.resizeFramebufferInfo(gl, framebuffer3, undefined, gl.canvas.width, gl.canvas.height);
