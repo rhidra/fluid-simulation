@@ -81,8 +81,6 @@ export class MouseListener {
     this.prevDir = [x, y];
     
     if (this.mouseDragCb) {
-      // console.log([x, y])
-      console.log('force:', Math.sqrt(dir[0]*dir[0]+dir[1]*dir[1]));
       this.mouseDragCb([x, y], dir);
     }
   }
