@@ -1,0 +1,30 @@
+$bg: #263341;
+$red: #f2304d;
+
+nav {
+  width: 30%;
+  z-index: 10;
+  position: absolute;
+  top: 0;
+  border-left: 2px solid $red;
+  background: linear-gradient($bg, #222d3b);
+  padding: 1rem;
+
+  section.radio {
+    input { display: none; }
+    label { 
+      display: block; 
+      border: 1px solid rgba(#2d3b49, .6);
+      border-radius: 8px;
+      padding: 0.3rem;
+      font-size: .5rem;
+      color: #fffdfe;
+      transition: background linear 150ms;
+      margin: .25rem 0;
+    }
+
+    input:checked + label {
+      background-color: $red;
+    }
+  }
+}

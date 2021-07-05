@@ -1,4 +1,4 @@
 import { main } from './js';
-import './style.css';
+import './style/index.scss';
 
 window.addEventListener("load", () => main());

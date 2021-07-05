@@ -1,4 +1,7 @@
+@use './navbar.scss';
+
 * {
+  font: 1rem 'Fira Sans', sans-serif;
   user-select: none;
 }
 
@@ -16,8 +19,8 @@ body {
   background-color: black;
 }
 
-canvas#c { 
+canvas#c {
+  z-index: 1;
   width: 100%; 
   height: 100%; 
 }
-

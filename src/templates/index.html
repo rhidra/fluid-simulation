@@ -5,9 +5,35 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
     <title>Fluid Simulation</title>
 </head>
 <body>
   <canvas id="c"></canvas>
+  
+  <nav>
+    <section class="radio">
+      <div>
+        <input type="radio" value="none" id="none" name="postProcess">
+        <label for="none">None</label>
+      </div>
+      <div>
+        <input type="radio" value="pixel1" id="pixel1" name="postProcess">
+        <label for="pixel1">Pixel1</label>
+      </div>
+      <div>
+        <input type="radio" value="pixel2" id="pixel2" name="postProcess">
+        <label for="pixel2">Pixel1</label>
+      </div>
+      <div>
+        <input type="radio" value="pixel3" id="pixel3" name="postProcess">
+        <label for="pixel3">Pixel1</label>
+      </div>
+      <div>
+        <input type="radio" value="blur" id="blur" name="postProcess">
+        <label for="blur">Motion blur</label>
+      </div>
+    </section>
+  </nav>
 </body>
 </html>

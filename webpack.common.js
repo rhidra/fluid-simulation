@@ -7,23 +7,28 @@ module.exports = {
   entry: path.resolve(__dirname, './src/index.ts'),
   module: {
     rules: [
-      {
+      { // Typescript loader
         test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
-      }, {
+      }, { // CSS loader
         test: /\.css$/i,
         use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader'
         ],
-      }, {
+      }, { // SCSS loader
+        test: /\.s[ac]ss$/i,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          "sass-loader",
+        ],
+      }, { // GLSL loader
         test: /\.(frag|vert)$/,
         use: {
           loader: 'webpack-glsl-minify',
           options: {
-            preserveAll: true,
-            disableMangle: true,
+            preserveAll: false,
+            disableMangle: false,
           }
         },
       },
