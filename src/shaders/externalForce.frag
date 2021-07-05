@@ -34,14 +34,15 @@ void main() {
   vec2 st = gl_FragCoord.xy / resolution.xy;
 
   vec2 vel = texture2D(velocity, st).xy;
+  st.x *= resolution.x / resolution.y;
 
   // We don't modify the field if no force is applied
   if (force.x + force.y != 0.) {
 
     // pt1 and pt2 are the 2 focal points of an ellipsis
     // Correct the vertical axis which is not the same in GLSL and in DOM
-    vec2 pt2 = vec2(point.x, 1. - point.y);
-    vec2 f = vec2(force.x, - force.y);
+    vec2 pt2 = vec2(point.x, point.y);
+    vec2 f = vec2(force.x, force.y);
     vec2 pt1 = pt2 - f * 2.;
 
     // Distance field for the ellipsis

@@ -79,6 +79,10 @@ export function initSimulation(listener: MouseListener) {
     if (twgl.resizeCanvasToDisplaySize(gl.canvas as any)) {
       twgl.resizeFramebufferInfo(gl, framebuffer1, undefined, gl.canvas.width, gl.canvas.height);
       twgl.resizeFramebufferInfo(gl, framebuffer2, undefined, gl.canvas.width, gl.canvas.height);
+      twgl.resizeFramebufferInfo(gl, framebuffer3, undefined, gl.canvas.width, gl.canvas.height);
+      twgl.resizeFramebufferInfo(gl, framebuffer4, undefined, gl.canvas.width, gl.canvas.height);
+      twgl.resizeFramebufferInfo(gl, framebufferVel, undefined, gl.canvas.width, gl.canvas.height);
+      twgl.resizeFramebufferInfo(gl, framebufferColors, undefined, gl.canvas.width, gl.canvas.height);
     }
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     
@@ -116,42 +120,39 @@ export function initSimulation(listener: MouseListener) {
       [advColors.uniforms.force.variableName]: uniformsExtForce[externalForce.uniforms.force.variableName],
       [advColors.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
     };
-
+    
     const uniformsIdentity = {
       [identity.uniforms.texture.variableName]: texture1,
       [identity.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
     };
-
+    
     const uniformsPostProcess = {
       [postProcess.uniforms.time.variableName]: now,
       [postProcess.uniforms.colors.variableName]: textColors,
       [postProcess.uniforms.velocity.variableName]: textVel,
       [postProcess.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
     };
-
+    
     if (i === 0) {
       // Render initial velocity to textVel
       uniformsIdentity[identity.uniforms.texture.variableName] = initVel;
       renderToTexture(gl, progIdentity, framebufferVel, bufferInfo, uniformsIdentity);
-
+      
       // Render initial texture to textColors
       uniformsAdvColors[advColors.uniforms.prev.variableName] = initColors;
       renderToTexture(gl, progAdvColor, framebufferColors, bufferInfo, uniformsAdvColors);
     } else {
       // Add external forces to the velocity and render to texture1
       renderToTexture(gl, progExtForce, framebuffer1, bufferInfo, uniformsExtForce);
-
-      // uniformsIdentity[identity.uniforms.texture.variableName] = texture1;
-      // renderToTexture(gl, progIdentity, null, bufferInfo, uniformsIdentity);
-
+      
       // Render advected velocity to texture2
       renderToTexture(gl, progAdvVel, framebuffer2, bufferInfo, uniformsAdvVel);
-
+      
       // Render divergence to texture1
       renderToTexture(gl, progDiv, framebuffer1, bufferInfo, uniformsDiv);
-
+      
       // Jacobi algorithm to approximate pressure
-      for (let j = 0; j < 5; j++) {
+      for (let j = 0; j < 2; j++) {
         if (j % 2 === 0) {
           // Render one iteration of the Jacobi algorithm to texture3
           renderToTexture(gl, progJacobi, framebuffer3, bufferInfo, uniformsJacobi);
@@ -162,18 +163,20 @@ export function initSimulation(listener: MouseListener) {
           uniformsJacobi[jacobi.uniforms.prev.variableName] = texture4;
         }
       }
-
+      
       // Render the velocity to textVel
       uniformsVel[velocity.uniforms.pressure.variableName] = uniformsJacobi[jacobi.uniforms.prev.variableName];
       renderToTexture(gl, progVel, framebufferVel, bufferInfo, uniformsVel);
-
+            
       // Render the advected colors to texture1 and textColors
       renderToTexture(gl, progAdvColor, framebuffer1, bufferInfo, uniformsAdvColors);
       uniformsIdentity[identity.uniforms.texture.variableName] = texture1;
       renderToTexture(gl, progIdentity, framebufferColors, bufferInfo, uniformsIdentity);
     }
-
+    
+    uniformsIdentity[identity.uniforms.texture.variableName] = textColors;
     // Render the color texture to the screen with some post processing
+    // renderToTexture(gl, progIdentity, null, bufferInfo, uniformsIdentity);
     renderToTexture(gl, progPostProcess, null, bufferInfo, uniformsPostProcess);
 
     i++;

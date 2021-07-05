@@ -68,8 +68,8 @@ export class MouseListener {
     }
 
     const rect = this.canvas.getBoundingClientRect();
-    const x = clientX / rect.width;
-    const y = clientY / rect.height;
+    const x = clientX / rect.width * (rect.width/rect.height);
+    const y = 1. - clientY / rect.height;
 
     if (!this.prevDir) {
       this.prevDir = [x, y];
@@ -81,7 +81,8 @@ export class MouseListener {
     this.prevDir = [x, y];
     
     if (this.mouseDragCb) {
-      // console.log('force:', Math.sqrt(dir[0]*dir[0]+dir[1]*dir[1]));
+      // console.log([x, y])
+      console.log('force:', Math.sqrt(dir[0]*dir[0]+dir[1]*dir[1]));
       this.mouseDragCb([x, y], dir);
     }
   }

@@ -67,16 +67,14 @@ void main() {
   // Slow decay of low speed colors
   // Allow for to maintain the halo
   color.rgb = color.rgb * min(1., step(0.2, v) + sqrt(pow(v / 0.2, 1. / 30.)));
-  
 
   // Add colors on force points
-  vec2 pt = vec2(point.x, 1. - point.y);
-  vec2 force_ = vec2(force.x, - force.y);
+  st.x *= resolution.x / resolution.y;
 
-  float d = length(st - pt);
+  float d = length(st - point);
   d = exp(-d * 20.) * 1.;
 
-  float f = min(length(force_), .1) / .1;
+  float f = min(length(force), .1) / .1;
   
   float s = max(0.1, sqrt(1. - min(1., 1.5 * pow(v, 2.))));
   color.rgb += f * d * hsb2rgb(vec3(time/5., s, 1.));
