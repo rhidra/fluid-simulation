@@ -144,6 +144,9 @@ export function initSimulation(listener: MouseListener) {
     } else {
       // Add external forces to the velocity and render to texture1
       renderToTexture(gl, progExtForce, framebuffer1, bufferInfo, uniformsExtForce);
+
+      // uniformsIdentity[identity.uniforms.texture.variableName] = textVel;
+      // renderToTexture(gl, progIdentity, null, bufferInfo, uniformsIdentity);
       
       // Render advected velocity to texture2
       renderToTexture(gl, progAdvVel, framebuffer2, bufferInfo, uniformsAdvVel);
@@ -152,7 +155,7 @@ export function initSimulation(listener: MouseListener) {
       renderToTexture(gl, progDiv, framebuffer1, bufferInfo, uniformsDiv);
       
       // Jacobi algorithm to approximate pressure
-      for (let j = 0; j < 2; j++) {
+      for (let j = 0; j < 4; j++) {
         if (j % 2 === 0) {
           // Render one iteration of the Jacobi algorithm to texture3
           renderToTexture(gl, progJacobi, framebuffer3, bufferInfo, uniformsJacobi);
@@ -174,9 +177,10 @@ export function initSimulation(listener: MouseListener) {
       renderToTexture(gl, progIdentity, framebufferColors, bufferInfo, uniformsIdentity);
     }
     
-    uniformsIdentity[identity.uniforms.texture.variableName] = textColors;
-    // Render the color texture to the screen with some post processing
+    // uniformsIdentity[identity.uniforms.texture.variableName] = textColors;
     // renderToTexture(gl, progIdentity, null, bufferInfo, uniformsIdentity);
+    
+    // Render the color texture to the screen with some post processing
     renderToTexture(gl, progPostProcess, null, bufferInfo, uniformsPostProcess);
 
     i++;

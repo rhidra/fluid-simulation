@@ -51,7 +51,7 @@ void main() {
     // Gradient from the back to the front of the ellipsis, to add more force to the front
     float front = dot((st - pt1)/length(st-pt1), f/length(f));
     front = front * .5 + .5;
-    front = sqrt(pow(front, 20.));
+    front = min(1., sqrt(pow(front, 20.)));
 
     // Radius of the ellipsis, depends on the force applied
     float r = lerp(.01, .25, .001, .2, min(length(f*2.), .2));
