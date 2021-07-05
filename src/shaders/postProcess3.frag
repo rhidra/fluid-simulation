@@ -47,7 +47,7 @@ vec3 maxSampling(sampler2D texture, vec2 uv, float incr) {
 void main() {
   vec2 uv = gl_FragCoord.xy / resolution.xy;
 
-  float k = 60.;
+  float k = 50.;
 
   vec2 iuv = floor(uv * k) / k;
   vec2 fuv = fract(uv * k);
@@ -59,10 +59,8 @@ void main() {
   icolor = texture2D(colors, iuv).rgb;
   
   fuv.x *= resolution.x / resolution.y;
-  // fuv = fract(uv * k);
-  // iuv = floor(uv * k) / k;
-  float ow = .25;
-  float iw = .05;
+  float ow = .1;
+  float iw = .1;
   vec2 corner1 = step(vec2(ow), fuv);
   vec2 corner2 = step(vec2(ow), 1. - fuv);
   vec2 corner3 = step(vec2(ow+iw), fuv);
