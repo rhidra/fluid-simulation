@@ -1,4 +1,5 @@
 import * as twgl from 'twgl.js';
+import { Controller, RenderType } from './controls';
 import { MouseListener } from './events';
 import { createTexture, createSolidTexture } from './texture';
 
@@ -11,11 +12,15 @@ const jacobi = require('../shaders/jacobi.frag');
 const velocity = require('../shaders/velocity.frag');
 const advColors = require('../shaders/advColors.frag');
 const identity = require('../shaders/identity.frag');
-const postProcess = require('../shaders/postProcess.frag');
+const postProcessVelocity = require('../shaders/postProcessVelocity.frag');
+const postProcessBlur = require('../shaders/postProcessBlur.frag');
+const postProcessPixelize = require('../shaders/postProcessPixelize.frag');
+const postProcessGrid = require('../shaders/postProcessGrid.frag');
+const postProcessSquare = require('../shaders/postProcessSquare.frag');
 
 const RESOLUTION_FACTOR = 1.4;
 
-export function initSimulation(listener: MouseListener) {
+export function initSimulation(listener: MouseListener, controller: Controller) {
   // WebGL init
   const gl = document.querySelector<HTMLCanvasElement>("#c").getContext("webgl");
   twgl.resizeCanvasToDisplaySize(gl.canvas as any);
@@ -36,7 +41,11 @@ export function initSimulation(listener: MouseListener) {
   const progVel = twgl.createProgramInfo(gl, [vert.sourceCode, velocity.sourceCode])
   const progAdvColor = twgl.createProgramInfo(gl, [vert.sourceCode, advColors.sourceCode])
   const progIdentity = twgl.createProgramInfo(gl, [vert.sourceCode, identity.sourceCode]);
-  const progPostProcess = twgl.createProgramInfo(gl, [vert.sourceCode, postProcess.sourceCode]);
+  const progPostProcessVelocity = twgl.createProgramInfo(gl, [vert.sourceCode, postProcessVelocity.sourceCode]);
+  const progPostProcessBlur = twgl.createProgramInfo(gl, [vert.sourceCode, postProcessBlur.sourceCode]);
+  const progPostProcessPixelize = twgl.createProgramInfo(gl, [vert.sourceCode, postProcessPixelize.sourceCode]);
+  const progPostProcessGrid = twgl.createProgramInfo(gl, [vert.sourceCode, postProcessGrid.sourceCode]);
+  const progPostProcessSquare = twgl.createProgramInfo(gl, [vert.sourceCode, postProcessSquare.sourceCode]);
   
   // Vertex shader stuff
   const arrays = {position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0]};
@@ -132,11 +141,37 @@ export function initSimulation(listener: MouseListener) {
       [identity.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
     };
     
-    const uniformsPostProcess = {
-      [postProcess.uniforms.time.variableName]: now,
-      [postProcess.uniforms.colors.variableName]: textColors,
-      [postProcess.uniforms.velocity.variableName]: textVel,
-      [postProcess.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
+    const uniformsPostProcessVelocity = {
+      [postProcessVelocity.uniforms.velocity.variableName]: textVel,
+      [postProcessVelocity.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
+    };
+    
+    const uniformsPostProcessBlur = {
+      [postProcessBlur.uniforms.time.variableName]: now,
+      [postProcessBlur.uniforms.colors.variableName]: textColors,
+      [postProcessBlur.uniforms.velocity.variableName]: textVel,
+      [postProcessBlur.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
+    };
+    
+    const uniformsPostProcessPixelize = {
+      [postProcessPixelize.uniforms.time.variableName]: now,
+      [postProcessPixelize.uniforms.colors.variableName]: textColors,
+      [postProcessPixelize.uniforms.velocity.variableName]: textVel,
+      [postProcessPixelize.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
+    };
+    
+    const uniformsPostProcessGrid = {
+      [postProcessGrid.uniforms.time.variableName]: now,
+      [postProcessGrid.uniforms.colors.variableName]: textColors,
+      [postProcessGrid.uniforms.velocity.variableName]: textVel,
+      [postProcessGrid.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
+    };
+    
+    const uniformsPostProcessSquare = {
+      [postProcessSquare.uniforms.time.variableName]: now,
+      [postProcessSquare.uniforms.colors.variableName]: textColors,
+      [postProcessSquare.uniforms.velocity.variableName]: textVel,
+      [postProcessSquare.uniforms.resolution.variableName]: [gl.canvas.width, gl.canvas.height],
     };
     
     if (i === 0) {
@@ -151,9 +186,6 @@ export function initSimulation(listener: MouseListener) {
       // Add external forces to the velocity and render to texture1
       renderToTexture(gl, progExtForce, framebuffer1, bufferInfo, uniformsExtForce);
 
-      // uniformsIdentity[identity.uniforms.texture.variableName] = textVel;
-      // renderToTexture(gl, progIdentity, null, bufferInfo, uniformsIdentity);
-      
       // Render advected velocity to texture2
       renderToTexture(gl, progAdvVel, framebuffer2, bufferInfo, uniformsAdvVel);
       
@@ -183,11 +215,29 @@ export function initSimulation(listener: MouseListener) {
       renderToTexture(gl, progIdentity, framebufferColors, bufferInfo, uniformsIdentity);
     }
     
-    // uniformsIdentity[identity.uniforms.texture.variableName] = textColors;
-    // renderToTexture(gl, progIdentity, null, bufferInfo, uniformsIdentity);
     
     // Render the color texture to the screen with some post processing
-    renderToTexture(gl, progPostProcess, null, bufferInfo, uniformsPostProcess);
+    switch (controller.renderType) {
+      case RenderType.PIXELIZE:
+        renderToTexture(gl, progPostProcessPixelize, null, bufferInfo, uniformsPostProcessPixelize);
+        break;
+      case RenderType.GRID_FLOW:
+        renderToTexture(gl, progPostProcessGrid, null, bufferInfo, uniformsPostProcessGrid);
+        break;
+      case RenderType.SQUARE_FLOW:
+        renderToTexture(gl, progPostProcessSquare, null, bufferInfo, uniformsPostProcessSquare);
+        break;
+      case RenderType.MOTION_BLUR:
+        renderToTexture(gl, progPostProcessBlur, null, bufferInfo, uniformsPostProcessBlur);
+        break;
+      case RenderType.VELOCITY:
+        renderToTexture(gl, progPostProcessVelocity, null, bufferInfo, uniformsPostProcessVelocity);
+        break;
+      case RenderType.NONE:
+      default:
+        uniformsIdentity[identity.uniforms.texture.variableName] = textColors;
+        renderToTexture(gl, progIdentity, null, bufferInfo, uniformsIdentity);
+    }
 
     i++;
     requestAnimationFrame(render);

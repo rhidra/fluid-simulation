@@ -14,10 +14,14 @@ nav {
   transition: transform ease-out 200ms;
   top: 0;
   left: 0;
-  transform: translateX(-100%);
+  transform: translateX(-110%);
   
   &.visible {
     transform: translateX(0);
+  }
+
+  section {
+    margin-top: .5rem;
   }
 
   section.radio {

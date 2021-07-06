@@ -5,5 +5,5 @@ import { initControlPanel } from './controls';
 export function main() {
   const listener = initMouseListener();
   const controller = initControlPanel();
-  initSimulation(listener);
+  initSimulation(listener, controller);
 }

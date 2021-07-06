@@ -13,26 +13,34 @@
   
   <nav>
     <section class="radio">
+      <p>Render type</p>
+      <div>
+        <input type="radio" value="velocity" id="velocity" name="renderType">
+        <label for="velocity">Velocity</label>
+      </div>
+      <div>
+        <input type="radio" value="none" id="none" name="renderType">
+        <label for="none">Normal</label>
+      </div>
+    </section>
+
+    <section class="radio">
       <p>Post processing effect</p>
       <div>
-        <input type="radio" value="none" id="none" name="postProcess">
-        <label for="none">None</label>
+        <input type="radio" value="pixelize" id="pixelize" name="renderType">
+        <label for="pixelize">Pixelize</label>
       </div>
       <div>
-        <input type="radio" value="pixel1" id="pixel1" name="postProcess">
-        <label for="pixel1">Pixel1</label>
+        <input type="radio" value="grid" id="grid" name="renderType">
+        <label for="grid">Grid flow</label>
       </div>
       <div>
-        <input type="radio" value="pixel2" id="pixel2" name="postProcess">
-        <label for="pixel2">Pixel1</label>
+        <input type="radio" value="square" id="square" name="renderType">
+        <label for="square">Square flow</label>
       </div>
       <div>
-        <input type="radio" value="pixel3" id="pixel3" name="postProcess">
-        <label for="pixel3">Pixel1</label>
-      </div>
-      <div>
-        <input type="radio" value="blur" id="blur" name="postProcess">
-        <label for="blur">Motion blur</label>
+        <input type="radio" value="blur" id="blur" name="renderType">
+        <label for="blur">Reflections</label>
       </div>
     </section>
 
