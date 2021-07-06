@@ -1,0 +1,36 @@
+$mobile-width: 481px;
+$mobile-lg-width: 641px;
+$tablet-width: 961px;
+// This breakpoint is also used in the JS sidebar file
+$tablet-lg-width: 1025px; 
+$laptop-width: 1281px;
+
+@mixin mobile {
+  @media (max-width: #{$mobile-width}) {
+    @content;
+  }
+}
+
+@mixin mobile-lg {
+  @media (max-width: #{$mobile-lg-width}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: #{$tablet-width}) {
+    @content;
+  }
+}
+
+@mixin tablet-lg {
+  @media (max-width: #{$tablet-lg-width}) {
+    @content;
+  }
+}
+
+@mixin laptop {
+  @media (max-width: #{$laptop-width}) {
+    @content;
+  }
+}

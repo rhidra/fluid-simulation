@@ -1,3 +1,5 @@
+@use './mixins.scss' as *;
+
 $bg: hsl(211, 26%, 20%);
 $grey: hsl(210, 9%, 43%);
 $red: hsl(351, 88%, 57%);
@@ -8,9 +10,11 @@ nav {
   position: absolute;
   border-left: 2px solid $red;
   background: linear-gradient($bg, #222d3b);
-  padding: 1.5rem 2rem 1rem 1rem;
+  padding: 1rem 4rem 2rem 2rem;
   padding-right: 2rem;
   box-shadow: 1px 1px 10px black;
+  max-height: 80%;
+  overflow-y: auto;
   transition: transform ease-out 200ms;
   top: 0;
   left: 0;
@@ -21,7 +25,7 @@ nav {
   }
 
   section {
-    margin-top: .5rem;
+    margin-top: 1rem;
   }
 
   section.radio {
@@ -29,9 +33,9 @@ nav {
 
     p {
       color: $grey;
-      font-size: .5rem;
+      font-size: 1rem;
       margin: 0;
-      margin-bottom: .5rem;
+      margin-bottom: 1rem;
     }
 
     label { 
@@ -39,9 +43,9 @@ nav {
       position: relative;
       display: block; 
       border-radius: 5px;
-      padding: .5rem;
-      padding-left: 1rem;
-      font-size: .5rem;
+      padding: 1rem;
+      padding-left: 2rem;
+      font-size: 1rem;
       color: $white;
       transition: color linear 150ms, background linear 150ms;
       &:hover {
@@ -50,16 +54,16 @@ nav {
       &:before {
         content: "◆";
         position: absolute;
-        left: .3rem;
-        transform: translateY(-1px) scale(0);
-        transition: all linear 50ms;
+        left: .6rem;
+        transform: translateY(-2px) scale(0);
+        transition: all linear 100ms;
       }
     }
 
     input:checked + label {
       color: $red;
       &:before {
-        transform: translateY(-1px) scale(1);
+        transform: translateY(-2px) scale(1);
       }
     }
   }
@@ -70,15 +74,15 @@ nav {
     cursor: pointer;
     top: 0;
     right: 0;
-    width: 20px;
-    height: 20px;
+    width: 40px;
+    height: 40px;
     background: none;
     color: $grey;
     border: none;
     outline: inherit;
-    padding: 0.1rem;
-    font-size: 0.9rem;
-    margin: .25rem;
+    padding: 0.2rem;
+    font-size: 1.8rem;
+    margin: .5rem;
     opacity: .7;
     transition: all linear 150ms;
 
@@ -97,19 +101,25 @@ button#open {
   background: $bg;
   border: 1px solid rgba(white, .4);
   outline: inherit;
-  border-radius: 15px;
-  width: 25px;
-  height: 25px;
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
   box-shadow: 0 0 7px rgba(white, .9);
-  margin: .5rem;
-  font-size: .7rem;
+  margin: 1rem;
+  font-size: 1.4rem;
   cursor: pointer;
   transition: all linear 150ms;
-  opacity: .5;
+  opacity: .4;
 
-  &:hover {
+  &:hover, &:active {
     border-color: rgba($red, .9);
     box-shadow: 0 0 10px rgba($red, 1);
     opacity: 1;
+  }
+
+  @include mobile {
+    font-size: 1rem;
+    width: 40px;
+    height: 40px;
   }
 }
