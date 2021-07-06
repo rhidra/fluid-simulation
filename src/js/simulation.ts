@@ -1,5 +1,5 @@
 import * as twgl from 'twgl.js';
-import { Controller, RenderType } from './controls';
+import { Controller, Quality, RenderType } from './controls';
 import { MouseListener } from './events';
 import { createTexture, createSolidTexture } from './texture';
 
@@ -18,14 +18,24 @@ const postProcessPixelize = require('../shaders/postProcessPixelize.frag');
 const postProcessGrid = require('../shaders/postProcessGrid.frag');
 const postProcessSquare = require('../shaders/postProcessSquare.frag');
 
-const RESOLUTION_FACTOR = 1.4;
+const RESOLUTION_FACTOR_HIGH = 1;
+const RESOLUTION_FACTOR_MEDIUM = 1.4;
+const RESOLUTION_FACTOR_LOW = 3;
+
+function resolutionFactor(controller: Controller) {
+  return {
+    [Quality.LOW]: RESOLUTION_FACTOR_LOW,
+    [Quality.MEDIUM]: RESOLUTION_FACTOR_MEDIUM,
+    [Quality.HIGH]: RESOLUTION_FACTOR_HIGH,
+  }[controller.quality];
+}
 
 export function initSimulation(listener: MouseListener, controller: Controller) {
   // WebGL init
   const gl = document.querySelector<HTMLCanvasElement>("#c").getContext("webgl");
   twgl.resizeCanvasToDisplaySize(gl.canvas as any);
-  gl.canvas.width /= RESOLUTION_FACTOR;
-  gl.canvas.height /= RESOLUTION_FACTOR;
+  gl.canvas.width /= resolutionFactor(controller);
+  gl.canvas.height /= resolutionFactor(controller);
 
   if (!gl.getExtension('OES_texture_float')) {
       console.error('no floating point texture support');
@@ -83,6 +93,8 @@ export function initSimulation(listener: MouseListener, controller: Controller) 
   let lastTime = Date.now() / 1000;
   let i = 0;
 
+  controller.onChangeQuality(() => initSimulation(listener, controller));
+
   function render(time: number) {
     const now = time / 1000;
     const dt = (now - lastTime) * 1;
@@ -90,8 +102,9 @@ export function initSimulation(listener: MouseListener, controller: Controller) 
 
     // Resize canvas and textures
     if (twgl.resizeCanvasToDisplaySize(gl.canvas as any)) {
-      gl.canvas.width /= RESOLUTION_FACTOR;
-      gl.canvas.height /= RESOLUTION_FACTOR;    
+      console.log('resizing');
+      gl.canvas.width /= resolutionFactor(controller);
+      gl.canvas.height /= resolutionFactor(controller);    
       twgl.resizeFramebufferInfo(gl, framebuffer1, undefined, gl.canvas.width, gl.canvas.height);
       twgl.resizeFramebufferInfo(gl, framebuffer2, undefined, gl.canvas.width, gl.canvas.height);
       twgl.resizeFramebufferInfo(gl, framebuffer3, undefined, gl.canvas.width, gl.canvas.height);
