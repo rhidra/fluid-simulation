@@ -8,9 +8,9 @@ $white: hsl(330, 100%, 100%);
 nav {
   z-index: 10;
   position: absolute;
-  border-left: 2px solid $red;
+  border-left: 5px solid $red;
   background: linear-gradient($bg, #222d3b);
-  padding: 1rem 4rem 2rem 2rem;
+  padding: 1rem 4rem 1rem 2rem;
   padding-right: 2rem;
   box-shadow: 1px 1px 10px black;
   max-height: 80%;
@@ -42,7 +42,7 @@ nav {
       cursor: pointer;
       position: relative;
       display: block; 
-      border-radius: 5px;
+      border-radius: 15px;
       padding: 1rem;
       padding-left: 2rem;
       font-size: 1rem;
@@ -64,6 +64,27 @@ nav {
       color: $red;
       &:before {
         transform: translateY(-2px) scale(1);
+      }
+    }
+  }
+
+  section.links {
+    a {
+      color: hsl(210, 13%, 66%);
+      cursor: pointer;
+      transition: background linear 150ms;
+      display: flex;
+      align-items: center;
+      border-radius: 15px;
+      padding: .6rem .25rem;
+      text-decoration: none;
+
+      img {
+        opacity: .5;
+      }
+
+      &:hover {
+        background: rgba(#2d3b49, .6);
       }
     }
   }
