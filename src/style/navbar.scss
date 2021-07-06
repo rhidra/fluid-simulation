@@ -6,11 +6,19 @@ $white: hsl(330, 100%, 100%);
 nav {
   z-index: 10;
   position: absolute;
-  top: 0;
   border-left: 2px solid $red;
   background: linear-gradient($bg, #222d3b);
-  padding: 1rem;
+  padding: 1.5rem 2rem 1rem 1rem;
+  padding-right: 2rem;
   box-shadow: 1px 1px 10px black;
+  transition: transform ease-out 200ms;
+  top: 0;
+  left: 0;
+  transform: translateX(-100%);
+  
+  &.visible {
+    transform: translateX(0);
+  }
 
   section.radio {
     input { display: none; }
@@ -52,20 +60,52 @@ nav {
     }
   }
 
-  button#menu {
+  button#close {
     z-index: 9;
     position: absolute;
     cursor: pointer;
     top: 0;
-    left: 100%;
-    background: $bg;
-    color: white;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    background: none;
+    color: $grey;
     border: none;
     outline: inherit;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
     padding: 0.1rem;
-    font-size: 0.8rem;
-    box-shadow: 4px 1px 8px rgba(black, .5);
+    font-size: 0.9rem;
+    margin: .25rem;
+    opacity: .7;
+    transition: all linear 150ms;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+button#open {
+  z-index: 9;
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: $white;
+  background: $bg;
+  border: 1px solid rgba(white, .4);
+  outline: inherit;
+  border-radius: 15px;
+  width: 25px;
+  height: 25px;
+  box-shadow: 0 0 7px rgba(white, .9);
+  margin: .5rem;
+  font-size: .7rem;
+  cursor: pointer;
+  transition: all linear 150ms;
+  opacity: .5;
+
+  &:hover {
+    border-color: rgba($red, .9);
+    box-shadow: 0 0 10px rgba($red, 1);
+    opacity: 1;
   }
 }
