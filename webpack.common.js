@@ -50,6 +50,6 @@ module.exports = {
     new MiniCssExtractPlugin({filename: "styles.[hash].css"}),
     new CnameWebpackPlugin({
       domain: 'fluid.remyhidra.dev',
-    })
+    }),
   ]
 };
