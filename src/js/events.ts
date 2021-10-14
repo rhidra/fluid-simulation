@@ -49,8 +49,8 @@ export class MouseListener {
   handleMouseDown(clientX: number, clientY: number) {
     this.isMouseDown = true
     const rect = this.canvas.getBoundingClientRect();
-    const x = clientX / rect.width;
-    const y = clientY / rect.height;
+    const x = clientX / rect.height;
+    const y = 1. - clientY / rect.height;
     this.prevDir = [x, y];
   }
 
@@ -68,7 +68,7 @@ export class MouseListener {
     }
 
     const rect = this.canvas.getBoundingClientRect();
-    const x = clientX / rect.width * (rect.width/rect.height);
+    const x = clientX / rect.height;
     const y = 1. - clientY / rect.height;
 
     if (!this.prevDir) {
