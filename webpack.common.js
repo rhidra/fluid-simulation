@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CnameWebpackPlugin = require('cname-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: path.resolve(__dirname, './src/index.ts'),
@@ -50,6 +51,11 @@ module.exports = {
     new MiniCssExtractPlugin({filename: "styles.[hash].css"}),
     new CnameWebpackPlugin({
       domain: 'fluid.remyhidra.dev',
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'public', to: '' },
+      ],
     }),
   ]
 };
